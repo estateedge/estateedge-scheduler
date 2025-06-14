@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib'
 import { Construct } from 'constructs'
-import { DatabaseKeepAliveConstruct } from '../constructs/databaseKeepAlive.construct'
+import { DatabaseKeepAliveConstruct } from '../constructs/database-keepalive.construct'
 
 export interface SchedulerStackProps extends cdk.StackProps {}
 
@@ -9,7 +9,7 @@ export class SchedulerStack extends cdk.Stack {
     super(scope, id, props)
 
     new DatabaseKeepAliveConstruct(this, 'DatabaseKeepAlive', {
-      scheduleExpression: 'rate(1 minute)',
+      scheduleExpression: 'rate(1 day)',
       lambdaMemorySize: 128,
       lambdaTimeout: cdk.Duration.seconds(30),
     })

@@ -4,6 +4,8 @@ import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as events from 'aws-cdk-lib/aws-events'
 import * as targets from 'aws-cdk-lib/aws-events-targets'
 import * as iam from 'aws-cdk-lib/aws-iam'
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
+import { Runtime } from 'aws-cdk-lib/aws-lambda'
 
 export interface DatabaseKeepAliveConstructProps {
   scheduleExpression?: string
@@ -24,25 +26,23 @@ export class DatabaseKeepAliveConstruct extends Construct {
     super(scope, id)
 
     // Create Lambda function
-    this.lambdaFunction = new lambda.Function(
-      this,
-      'DatabaseKeepAliveFunction',
-      {
-        runtime: lambda.Runtime.NODEJS_22_X,
-        handler: 'handlers/database-keepalive/index.handler',
-        code: lambda.Code.fromAsset('src'),
-        memorySize: props.lambdaMemorySize ?? 128,
-        timeout: props.lambdaTimeout ?? cdk.Duration.seconds(30),
-        environment: {
-          DATABASE_ENDPOINT: props.databaseEndpoint ?? '',
-        },
+
+    new NodejsFunction(this, 'DatabaseKeepAliveFunction', {
+      functionName: 'estateedge-database-keepalive',
+      entry: 'src/handlers/database-keepalive/cron/database-keepalive.cron.ts',
+      handler: 'handler',
+      runtime: Runtime.NODEJS_22_X,
+      memorySize: props.lambdaMemorySize ?? 128,
+      timeout: props.lambdaTimeout ?? cdk.Duration.seconds(30),
+      environment: {
+        DATABASE_ENDPOINT: props.databaseEndpoint ?? '',
       },
-    )
+    })
 
     // Create EventBridge rule for periodic execution
     this.eventRule = new events.Rule(this, 'DatabaseKeepAliveRule', {
       schedule: events.Schedule.expression(
-        props.scheduleExpression ?? 'rate(1 minute)',
+        props.scheduleExpression ?? 'rate(1 day)',
       ),
       description: 'Keep database connection active by periodic calls',
     })
