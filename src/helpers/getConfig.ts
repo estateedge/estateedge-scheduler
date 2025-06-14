@@ -1,8 +1,10 @@
 import * as dotenv from 'dotenv'
+import * as path from 'path'
 import { AppConfig } from './getConfig.types'
 
 export const getConfig = (): AppConfig => {
-  dotenv.config({ path: '../.env' })
+  // Load .env from project root
+  dotenv.config({ path: path.resolve(__dirname, '../../.env') })
   const { AWS_ACCOUNT_ID, AWS_REGION } = process.env
 
   if (!AWS_ACCOUNT_ID) {
