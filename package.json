@@ -13,7 +13,8 @@
     "destroy": "cdk destroy --force",
     "lint": "eslint .",
     "prettier:check": "prettier --check \"./**/*.{js,ts,json}\"",
-    "prettier:write": "prettier --write \"./**/*.{js,ts,json}\""
+    "prettier:write": "prettier --write \"./**/*.{js,ts,json}\"",
+    "cdk:synth": "cdk synth"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
@@ -35,6 +36,7 @@
   },
   "dependencies": {
     "aws-cdk-lib": "2.200.1",
-    "constructs": "^10.0.0"
+    "constructs": "^10.0.0",
+    "dotenv": "^16.5.0"
   }
 }
