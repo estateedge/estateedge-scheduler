@@ -6,11 +6,7 @@ import * as events from 'aws-cdk-lib/aws-events'
 import * as targets from 'aws-cdk-lib/aws-events-targets'
 import * as iam from 'aws-cdk-lib/aws-iam'
 
-export interface DatabaseKeepAliveConstructProps {
-  scheduleExpression?: string
-  lambdaMemorySize?: number
-  lambdaTimeout?: cdk.Duration
-}
+export interface DatabaseKeepAliveConstructProps {}
 
 export class DatabaseKeepAliveConstruct extends Construct {
   public readonly lambdaFunction: NodejsFunction
@@ -32,8 +28,8 @@ export class DatabaseKeepAliveConstruct extends Construct {
         entry:
           'src/handlers/database-keepalive/cron/database-keepalive.cron.ts',
         handler: 'handler',
-        memorySize: props.lambdaMemorySize ?? 128,
-        timeout: props.lambdaTimeout ?? cdk.Duration.seconds(30),
+        memorySize: 128,
+        timeout: cdk.Duration.seconds(30),
         environment: {},
       },
     )
@@ -51,9 +47,7 @@ export class DatabaseKeepAliveConstruct extends Construct {
     )
 
     this.eventRule = new events.Rule(this, 'DatabaseKeepAliveRule', {
-      schedule: events.Schedule.expression(
-        props.scheduleExpression ?? 'rate(1 day)',
-      ),
+      schedule: events.Schedule.expression('rate(3 days)'),
       description: 'Keep database connection active by periodic calls',
     })
 
